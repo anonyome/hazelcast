@@ -77,14 +77,14 @@ public class DescribeInstances {
             return;
         }
         try {
-            String query = "latest/meta-data/iam/security-credentials/";
+            String query = "/latest/meta-data/iam/security-credentials/";
             URL url;
             url = new URL("http", IAM_ROLE_ENDPOINT, query);
             is = new InputStreamReader(url.openStream(), "UTF-8");
             reader = new BufferedReader(is);
             awsConfig.setIamRole(reader.readLine());
         } catch (IOException e) {
-            throw new InvalidConfigurationException("Invalid Aws Configuration");
+            throw new InvalidConfigurationException("Invalid Aws Configuration", e);
         } finally {
             if (is != null) {
                 is.close();
@@ -97,7 +97,7 @@ public class DescribeInstances {
 
     private void getKeysFromIamRole() {
         try {
-            String query = "latest/meta-data/iam/security-credentials/" + awsConfig.getIamRole();
+            String query = "/latest/meta-data/iam/security-credentials/" + awsConfig.getIamRole();
             URL url = new URL("http", IAM_ROLE_ENDPOINT, query);
             InputStreamReader is = new InputStreamReader(url.openStream(), "UTF-8");
             BufferedReader reader = new BufferedReader(is);
@@ -106,7 +106,7 @@ public class DescribeInstances {
             awsConfig.setSecretKey(map.get("SecretAccessKey"));
             attributes.put("X-Amz-Security-Token", map.get("Token"));
         } catch (IOException io) {
-            throw new InvalidConfigurationException("Invalid Aws Configuration");
+            throw new InvalidConfigurationException("Invalid Aws Configuration", io);
         }
     }
 
